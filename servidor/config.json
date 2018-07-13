@@ -1,0 +1,15 @@
+{
+    "request_options":
+    {
+        "method": "POST",
+        "hostname": "certauth.defontana.com",
+        "path": "/auth/token",
+        "headers": {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    },
+    "server":
+    {
+        "port":8000
+    }
+}

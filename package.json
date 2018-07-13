@@ -1,0 +1,24 @@
+{
+  "name": "prueba_cliente-servidor",
+  "version": "1.0.0",
+  "description": "prueba cliente-servidor para la ejecución de aplicaciones de forma remota en un servidor local",
+  "main": "./servidor/servidor_local.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbazaes-isw/prueba_cliente-servidor.git"
+  },
+  "keywords": [
+    "prueba",
+    "cliente",
+    "servidor"
+  ],
+  "author": "Cristian Bazaes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cbazaes-isw/prueba_cliente-servidor/issues"
+  },
+  "homepage": "https://github.com/cbazaes-isw/prueba_cliente-servidor#readme"
+}
