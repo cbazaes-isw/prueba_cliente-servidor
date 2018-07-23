@@ -3,32 +3,39 @@ var net = require("net"),
     config = require("./config.json"),
     carrier = require("carrier");
 
-const { exec } = require('child_process');
-
 server = net.createServer((socket) => {
 
-    carrier.carry(socket, (command) => {
-        console.log(`Solicitando la execución de: ${command}`);
+    carrier.carry(socket, (cmd_line) => {
+        if (!cmd_line) return;
+
+        console.log(`Solicitando la execución de: ${cmd_line}`);
+
+        var commands = cmd_line.split(" ");
+        var command = commands[0];
+        var args = (commands.length > 1 ? commands.slice(1, commands.length) : []);
 
         try {
 
-            exec(command, (err, stdout, stderr) => {
+            var launcherErp = require('child_process').spawn(command, args);
 
-                if (err) {
-                    console.error(err);
-                    broadcast(socket, err.message);
-                    return;
-                }
-                if (stdout){
-                    console.log(stdout);
-                    broadcast(socket, stdout);
-                }
-    
-                if (stderr) {
-                    console.log(stderr);
-                    broadcast(socket, stderr);
-                }
-    
+            launcherErp.stdout.on('data', (data) => {
+                console.log(data.toString());
+                broadcast(socket, data.toString());
+            });
+
+            launcherErp.stderr.on('data', (data) => {
+                console.error(data.toString());                
+                broadcast(socket, data.toString());
+            });
+
+            launcherErp.on('exit', (code) => {
+                console.log(`child process exited with code ${code}`);
+                broadcast(socket, `child process exited with code ${code}`);
+            });
+
+            launcherErp.on('error', (err) => {
+                console.error(err);
+                broadcast(socket, err.message);
             });
             
         } catch (error) {

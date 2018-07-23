@@ -1,13 +1,19 @@
 
-const { exec } = require('child_process');
-exec('iisreset', { encoding : "utf8"} , (err, stdout, stderr) => {
+var spawn		= require('child_process').spawn,
+	launcherErp	= spawn('launcherERP.exe', ['ALL']);
 
-	if (err) {
-		console.error(err);
-		return;
-	}
-	if (stdout) console.log(stdout);
+launcherErp.stdout.on('data', (data) => {
+	console.log(data.toString());
+});
 
-	if (stderr) console.error(stderr);
+launcherErp.stderr.on('data', (data) => {
+	console.error(data.toString());
+});
 
+launcherErp.on('exit', function (code) {
+	console.log('child process exited with code ' + code.toString());
+});
+
+launcherErp.on('error', (err) => {
+	console.error(err);
 });
