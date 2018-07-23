@@ -1,6 +1,6 @@
 
 const { exec } = require('child_process');
-exec('dir', { encoding : "utf8"} , (err, stdout, stderr) => {
+exec('iisreset', { encoding : "utf8"} , (err, stdout, stderr) => {
 
 	if (err) {
 		console.error(err);

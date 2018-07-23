@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/cbazaes-isw/prueba_cliente-servidor/issues"
   },
-  "homepage": "https://github.com/cbazaes-isw/prueba_cliente-servidor#readme"
+  "homepage": "https://github.com/cbazaes-isw/prueba_cliente-servidor#readme",
+  "dependencies": {
+    "carrier": "^0.3.0"
+  }
 }

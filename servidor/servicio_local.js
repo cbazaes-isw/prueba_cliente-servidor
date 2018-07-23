@@ -1,34 +1,60 @@
-var spawn = require("child_process"),
-    net = require("net"),
-    config = require("./config.json");
+
+var net = require("net"),
+    config = require("./config.json"),
+    carrier = require("carrier");
+
+const { exec } = require('child_process');
 
 server = net.createServer((socket) => {
-    var remoteAddress = socket.remoteAddress;
 
-    var chunks = [];
-    socket.on('data', (data) => {
-        console.log(`Recibiendo datos desde ${remoteAddress}...`);
-        chunks.push(data);
+    carrier.carry(socket, (command) => {
+        console.log(`Solicitando la execución de: ${command}`);
+
+        try {
+
+            exec(command, (err, stdout, stderr) => {
+
+                if (err) {
+                    console.error(err);
+                    broadcast(socket, err.message);
+                    return;
+                }
+                if (stdout){
+                    console.log(stdout);
+                    broadcast(socket, stdout);
+                }
+    
+                if (stderr) {
+                    console.log(stderr);
+                    broadcast(socket, stderr);
+                }
+    
+            });
+            
+        } catch (error) {
+
+            console.error(error);
+            
+        }
     });
 
     socket.on('end', () => {
-        var body = Buffer.concat(chunks).toString();
-
-        const child = spawn(body);
-        child.stdout.setEncoding("utf8");
-        child.stdout.on("data", (chunk) => {
-            console.log(chunks);
-        });
-
-        console.log(`${remoteAddress} dice: ${body}`);
-
-
+        console.log(`${socket.remoteAddress} se ha desconectado`);
+        broadcast(socket, 'Adios!');
     });
 
-    // e:\Documentos\Defontana.GIT\Main\1_ERP\desregistrador64.bat
+    socket.on('error', (err) => {
+        console.error(err);
+        broadcast(socket, `error: ${err.message}`);
+    });
 
-    console.log(`Aceptando conexiones desde ${remoteAddress}...`);
-    socket.write(`Hola ${remoteAddress}!\n`);
+    console.log(`Aceptando conexiones de ${socket.remoteAddress} : ${socket.remotePort}...`);
+    broadcast(socket, `Hola ${socket.remoteAddress}!`);
+
+    function broadcast(socket, message){
+        socket.write(message + '\n\r');
+    }
 
 });
 server.listen(config.server.port);
+console.log(`Escuchando conexiones en ${config.server.port}`);
