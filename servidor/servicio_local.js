@@ -3,9 +3,11 @@ var net = require("net"),
     config = require("./config.json"),
     carrier = require("carrier");
 
-server = net.createServer((socket) => {
+server = net.createServer((socket) =>
+{
 
-    carrier.carry(socket, (cmd_line) => {
+    carrier.carry(socket, (cmd_line) =>
+    {
         if (!cmd_line) return;
 
         console.log(`Solicitando la execución de: ${cmd_line}`);
@@ -14,43 +16,51 @@ server = net.createServer((socket) => {
         var command = commands[0];
         var args = (commands.length > 1 ? commands.slice(1, commands.length) : []);
 
-        try {
+        try
+        {
 
             var launcherErp = require('child_process').spawn(command, args);
 
-            launcherErp.stdout.on('data', (data) => {
+            launcherErp.stdout.on('data', (data) =>
+            {
                 console.log(data.toString());
                 broadcast(socket, data.toString());
             });
 
-            launcherErp.stderr.on('data', (data) => {
+            launcherErp.stderr.on('data', (data) =>
+            {
                 console.error(data.toString());                
                 broadcast(socket, data.toString());
             });
 
-            launcherErp.on('exit', (code) => {
+            launcherErp.on('exit', (code) =>
+            {
                 console.log(`child process exited with code ${code}`);
                 broadcast(socket, `child process exited with code ${code}`);
             });
 
-            launcherErp.on('error', (err) => {
+            launcherErp.on('error', (err) =>
+            {
                 console.error(err);
                 broadcast(socket, err.message);
             });
             
-        } catch (error) {
+        }
+        catch (error)
+        {
 
             console.error(error);
             
         }
     });
 
-    socket.on('end', () => {
+    socket.on('end', () =>
+    {
         console.log(`${socket.remoteAddress} se ha desconectado`);
-        broadcast(socket, 'Adios!');
     });
 
-    socket.on('error', (err) => {
+    socket.on('error', (err) =>
+    {
         console.error(err);
         broadcast(socket, `error: ${err.message}`);
     });
@@ -58,7 +68,8 @@ server = net.createServer((socket) => {
     console.log(`Aceptando conexiones de ${socket.remoteAddress} : ${socket.remotePort}...`);
     broadcast(socket, `Hola ${socket.remoteAddress}!`);
 
-    function broadcast(socket, message){
+    function broadcast(socket, message)
+    {
         socket.write(message + '\n\r');
     }
 
